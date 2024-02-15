@@ -1,4 +1,5 @@
-name: Dockerizing to Amazon ECR
+name: Java CI with Gradle
+
 on:
   push:
     branches: ["main"]
@@ -9,10 +10,8 @@ env:
   ECR_REPOSITORY: ub-ecr-repo
 
 jobs:
-  deploy:
+  build:
     runs-on: ubuntu-20.04
-    environment: production
-
     steps:
     - name: 1. CheckOut Source
       uses: actions/checkout@v3
@@ -25,17 +24,17 @@ jobs:
 
     - name: 3. Change Execute Mode
       run: chmod 775 gradlew
-
-    - name: 4. Install MySQL
-      uses: mirromutth/mysql-action@v1.1
-      with:
-        host port: 3306
-        container port: 3306
-        mysql version: '8.0'
-        mysql database: 'istory'
-        mysql root password: ${{ secrets.MYSQL_ROOT_PASSWORD }}
-        mysql username: ${{ secrets.MYSQL_USER }}
-        mysql password: ${{ secrets.MYSQL_PASSWORD }}
+#
+#    - name: 4. Install MySQL
+#      uses: mirromutth/mysql-action@v1.1
+#      with:
+#        host port: 3306
+#        container port: 3306
+#        mysql version: '8.0'
+#        mysql database: 'istory'
+#        mysql root password: ${{ secrets.MYSQL_ROOT_PASSWORD }}
+#        mysql username: ${{ secrets.MYSQL_USER }}
+#        mysql password: ${{ secrets.MYSQL_PASSWORD }}
 
     - name: 5. Build with Gradle
       uses: gradle/gradle-build-action@bd5760595778326ba7f1441bcf7e88b49de61a25 # v2.6.0

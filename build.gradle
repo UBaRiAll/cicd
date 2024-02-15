@@ -55,4 +55,8 @@ task copyJarToBin(type: Copy) {
     into "xinfra/docker/"
 }
 
+jar {
+    enabled = true
+}
+
 build.finalizedBy copyJarToBin
