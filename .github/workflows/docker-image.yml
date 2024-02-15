@@ -24,7 +24,7 @@ jobs:
 
     - name: 3. Change Execute Mode
       run: chmod 775 gradlew
-#
+
     - name: 4. Install MySQL
       uses: mirromutth/mysql-action@v1.1
       with:
