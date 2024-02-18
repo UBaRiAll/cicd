@@ -1,4 +1,4 @@
-name: CI
+name: CI/CD
 
 on:
   push:
@@ -10,8 +10,10 @@ env:
   ECR_REPOSITORY: ub-ecr-repo
 
 jobs:
-  build:
+  ci:
     runs-on: ubuntu-20.04
+    outputs:
+      IMAGE_TAG: ${{ steps.set-var.outputs.IMAGE_TAG }}
     steps:
     - name: 1. CheckOut Source
       uses: actions/checkout@v3
@@ -61,3 +63,41 @@ jobs:
         docker build ./xinfra/docker -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f ./xinfra/docker/Dockerfile
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+
+  cd:
+    needs: [ci]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Target Repository
+        uses: actions/checkout@v3
+        with:
+          repository: UBaRiAll/argocd-cicd
+          path: deploy-k8s
+
+      - name: Replace image tag in helm values (LOCAL)
+        uses: mikefarah/yq@master
+        env:
+          IMAGE_TAG: ${{needs.ci.outputs.IMAGE_TAG}}
+        with:
+          cmd: yq eval -i '.image.tag = env(IMAGE_TAG)' 'deploy-k8s/demo/values.yaml'
+
+      - name: Replace image tag in helm values (EKS)
+        uses: mikefarah/yq@master
+        env:
+          IMAGE_TAG: ${{needs.ci.outputs.IMAGE_TAG}}
+        with:
+          cmd: yq eval -i '.image.tag = env(IMAGE_TAG)' 'deploy-k8s/demo/values-eks.yaml'
+
+      - name: Push helm repo
+        env:
+          token: ${{ secrets.GH_TOKEN }}
+          IMAGE_TAG: ${{needs.ci.outputs.IMAGE_TAG}}
+        run: |
+          cd deploy-k8s
+          git config --global user.email "choiboyuna@gmail.com"
+          git config --global user.name "boyuna"
+
+          git add demo/values.yaml demo/values-eks.yaml;
+          git commit --message "Update demo image tag to $IMAGE_TAG";
+          git config -l | grep 'http\..*\.extraheader' | cut -d= -f1 | xargs -L1 git config --unset-all
+          git push --prune https://token:$token@github.com/UBaRiAll/argocd-cicd.git
