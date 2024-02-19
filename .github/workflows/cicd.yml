@@ -92,22 +92,22 @@ jobs:
     - name: Checkout kustomize repository
       uses: actions/checkout@v3
       with:
-        repository: UBaRiAll/cicd
+        repository: UBaRiAll/k8s-manifest-repo
         ref: main
         token: ${{ secrets.ACTION_TOKEN_K8S }}
-        path: cicd/
+        path: k8s-manifest-repo
 
     - name: Update Kubernetes resources
       run: |
         echo ${{ env.registry }}
         echo ${{ env.repository }}
         echo ${{ env.image_tag }}
-        cd cicd/kustomize/overlays/
+        cd k8s-manifest-repo/kustomize/overlays/
         kustomize edit set image ${{ env.registry }}/${{ env.repository }}=${{ env.registry }}/${{ env.repository }}:${{ env.image_tag }}
         cat kustomization.yaml
     - name: Commit files
       run: |
-        cd cicd
+        cd k8s-manifest-repo
         git config --global user.email "choiboyuna@gmail.com"
         git config --global user.name "boyuna"
         git commit -am "Update image tag"
