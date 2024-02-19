@@ -1,4 +1,4 @@
-repoURL: 'https://github.com/UBaRiAll/argocd-cicd.git'
+repoURL: 'https://github.com/UBaRiAll/cicd.git'
 apps:
   - name: kustomize-app
     project: default
