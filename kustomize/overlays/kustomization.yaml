@@ -4,7 +4,7 @@ namePrefix: dev-
 images:
 - name: 564131458637.dkr.ecr.ap-northeast-2.amazonaws.com/ub-ecr-repo
   newName: 564131458637.dkr.ecr.ap-northeast-2.amazonaws.com/ub-ecr-repo
-  newTag: bf7c8c01
+  newTag: 80dc45e1
 resources:
 - ../base
 patchesStrategicMerge:
