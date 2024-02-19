@@ -94,7 +94,7 @@ jobs:
       with:
         repository: UBaRiAll/cicd
         ref: main
-        # token: ${{ secrets.ACTION_TOKEN_K8S }} # 비공개 repo일 경우에만 필요 
+        token: ${{ secrets.ACTION_TOKEN_K8S }}
         path: cicd/
 
     - name: Update Kubernetes resources
