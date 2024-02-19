@@ -107,7 +107,7 @@ jobs:
         cat kustomization.yaml
     - name: Commit files
       run: |
-#        cd cicd
+        cd cicd
         git config --global user.email "choiboyuna@gmail.com"
         git config --global user.name "boyuna"
         git commit -am "Update image tag"
